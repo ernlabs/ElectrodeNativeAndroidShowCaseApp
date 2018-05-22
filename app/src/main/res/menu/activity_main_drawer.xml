@@ -12,6 +12,10 @@
             android:id="@+id/nav_color_picker"
             android:icon="@drawable/ic_menu_manage"
             android:title="ColorPickerMiniApp" />
+        <item
+            android:id="@+id/viewbuilder"
+            android:icon="@drawable/ic_menu_send"
+            android:title="View Builder" />
 
     </group>
 </menu>

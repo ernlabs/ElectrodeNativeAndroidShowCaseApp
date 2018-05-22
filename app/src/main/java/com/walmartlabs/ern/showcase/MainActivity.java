@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,17 +13,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.ernnavigation.ern.api.NavigateData;
-import com.ernnavigation.ern.api.NavigationApi;
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;
-import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeResponseListener;
-import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
 import com.walmartlabs.ern.container.ElectrodeReactActivityDelegate;
-import com.walmartlabs.ern.container.miniapps.MiniAppsConfig;
 import com.walmartlabs.ern.showcase.fragment.ColorPickerMiniAppFragment;
 import com.walmartlabs.ern.showcase.fragment.ElectrodeMiniAppFragment;
 import com.walmartlabs.ern.showcase.fragment.InitialFragment;
@@ -36,8 +28,6 @@ public class MainActivity extends AppCompatActivity
         ElectrodeMiniAppFragment.OnFragmentInteractionListener,
         ElectrodeReactActivityDelegate.BackKeyHandler {
 
-
-    private static final String TAG = MainActivity.class.getSimpleName();
     private ElectrodeReactActivityDelegate mReactActivityDelegate;
 
     @Override
@@ -47,9 +37,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mReactActivityDelegate = new ElectrodeReactActivityDelegate();
+        mReactActivityDelegate = new ElectrodeReactActivityDelegate(this);
         mReactActivityDelegate.setBackKeyHandler(this);
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -62,8 +51,6 @@ public class MainActivity extends AppCompatActivity
 
         Fragment initialFragment = InitialFragment.newInstance();
         switchToThisFragment(initialFragment);
-
-        registerNavigationApi();
     }
 
     private void switchToThisFragment(@NonNull final Fragment fragment) {
@@ -74,53 +61,22 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
     }
 
-    /**
-     * Implementation of the navigation API, this helps any MiniApp to easily navigate to other MiniApps and also pass an additional input data if necessary.
-     */
-    private void registerNavigationApi() {
-        NavigationApi.requests().registerNavigateRequestHandler(new ElectrodeBridgeRequestHandler<NavigateData, Boolean>() {
-            @Override
-            public void onRequest(@Nullable NavigateData navigateData, @NonNull ElectrodeBridgeResponseListener<Boolean> responseListener) {
-                if (!MainActivity.this.isFinishing()) {
-                    if (navigateData != null) {
-                        Class activityClass = MiniAppsConfig.MINIAPP_ACTIVITIES.get(navigateData.getminiAppName());
-                        if (activityClass != null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString("payload", navigateData.getinitialPayload());
-                            Intent intent = new Intent(MainActivity.this, activityClass);
-                            ElectrodeMiniAppActivity.addInitialProps(intent, bundle);
-                            MainActivity.this.startActivity(intent);
-                        } else {
-                            Toast.makeText(MainActivity.this, "No activity found to navigate for: " + navigateData.getminiAppName(), Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Log.e(TAG, "Not enough data provided to navigate");
-                    }
-                } else {
-                    Log.i(TAG, "Activity is finishing, cannot get a valid activity context");
-                }
-            }
-        });
-
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("", this.toString());
-        mReactActivityDelegate.onResume(this);
+        mReactActivityDelegate.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mReactActivityDelegate.onPause(this);
+        mReactActivityDelegate.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mReactActivityDelegate.onDestroy(this);
+        mReactActivityDelegate.onDestroy();
     }
 
 
@@ -146,6 +102,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_color_picker) {
             Fragment colorPickerFragment = ColorPickerMiniAppFragment.newInstance();
             switchToThisFragment(colorPickerFragment);
+        } else if (id == R.id.viewbuilder) {
+            String uri = "https://ern.walmart.com/ern/NavDemoMiniApp";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            startActivity(intent);
         } else {
             Toast.makeText(this, "Navigation for this item is not supported yet.! ", Toast.LENGTH_SHORT).show();
         }

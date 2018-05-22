@@ -5,6 +5,7 @@ import android.app.Application;
 import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
 import com.walmartlabs.ern.container.ElectrodeReactContainer;
 import com.walmartlabs.ern.container.plugins.CodePushPlugin;
+import com.walmartlabs.ern.showcase.api.NavigationApiImpl;
 
 public class MyApp extends Application {
 
@@ -18,5 +19,7 @@ public class MyApp extends Application {
                 new CodePushPlugin.Config("LoNcxCcr-T6oPrXuZN1TFGUEvCQ7H1T1L1o7f").enableDebugMode(true));
 
         Logger.overrideLogLevel(Logger.LogLevel.DEBUG);
+
+        NavigationApiImpl.registerNavigationApi();
     }
 }
