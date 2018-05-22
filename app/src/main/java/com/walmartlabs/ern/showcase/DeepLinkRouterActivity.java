@@ -24,9 +24,9 @@ public class DeepLinkRouterActivity extends ElectrodeCoreActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Bundle routeBundle = getIntent().getBundleExtra(INITIAL_PROPS);
-
-        incomingRoute = new ErnRoute(routeBundle);
+//        Bundle routeBundle = getIntent().getBundleExtra(INITIAL_PROPS);
+//
+//        incomingRoute = new ErnRoute(routeBundle);
 
         Uri data = getIntent().getData();
 

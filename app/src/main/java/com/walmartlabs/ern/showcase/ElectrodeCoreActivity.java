@@ -51,17 +51,16 @@ public abstract class ElectrodeCoreActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        Bundle routeBundle = getIntent().getBundleExtra(INITIAL_PROPS);
-//
-//        incomingRoute = routeBundle != null ? new ErnRoute(routeBundle) : null;
+        Bundle routeBundle = getIntent().getBundleExtra(INITIAL_PROPS);
+        ErnRoute incomingRoute = routeBundle != null ? new ErnRoute(routeBundle) : null;
 
         mReactActivityDelegate = new ElectrodeReactActivityDelegate(this);
         mReactActivityDelegate.setBackKeyHandler(this);
 
         Bundle bundle = new Bundle();
-//        if(incomingRoute != null) {
+        if(incomingRoute != null) {
             bundle.putString("payload", getNavigationContext().getPayload());
-//        }
+        }
 
         View reactRootView = mReactActivityDelegate.createMiniAppRootView(getMiniAppName(), bundle);
 
